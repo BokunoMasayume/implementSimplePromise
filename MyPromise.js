@@ -4,17 +4,19 @@ function MyPromise(callback){
     let subPro = [];
     let subProErr = [];
     
+    //setChild 处理then/catch的返回值 -- 当返回值为普通值，返回一个resolved MyPromise, 否则，返回对像的状态由该MyPromise决定
     function setChild(v){
         if(v instanceof MyPromise){
-            v.then(()=>{
-                subPro.forEach(e=>{e(v)});
+            v.then((s)=>{
+                subPro.forEach(e=>{e(s)});
             });
-            v.catch(()=>{
-                subProErr.forEach(e=>{e(v)});
+            v.catch((s)=>{
+                subProErr.forEach(e=>{e(s)});
             });
         }
         else subPro.forEach(e=>{e(v)});
     }
+    //setSvalue 处理then/catch的输入值 -- 直到输入值不是MyPromise才能继续处理，真正调用该then/catch的callback
     let setSvalue = (svalue, suc_or_err_cb  , successcb,errorcb)=>{
         if(svalue instanceof MyPromise){
             svalue.then((ss)=>{
